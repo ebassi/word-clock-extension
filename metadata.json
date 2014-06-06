@@ -3,4 +3,5 @@
   "uuid": "word-clock@emmanuelebassi.name",
   "name": "Word clock",
   "description": "Show time and date using words instead of numbers."
+  "url": "https://github.com/ebassi/word-clock-extension"
 }
