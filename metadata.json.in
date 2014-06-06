@@ -1,0 +1,8 @@
+{
+  "shell-version": [ "3.12" ],
+  "uuid": "@UUID@",
+  "name": "@NAME@",
+  "description": "Replace the digits with words in the clock",
+  "url": "@URL@",
+  "version": "@VERSION@"
+}

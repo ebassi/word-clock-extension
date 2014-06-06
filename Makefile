@@ -1,10 +1,23 @@
 EXTENSION_NAME = word-clock
+NAME = Word Clock
+VERSION = 2
+URL = https://github.com/ebassi/word-clock-extension
+
 UUID = $(EXTENSION_NAME)@emmanuelebassi.name
+SED = `which sed`
 ZIP = `which zip`
 
 install_data = metadata.json extension.js
 
-install:
+metadata.json: metadata.json.in Makefile
+	@$(SED) \
+	  -e "s|@NAME@|$(NAME)|" \
+	  -e "s|@UUID@|$(UUID)|" \
+	  -e "s|@VERSION@|$(VERSION)|" \
+	  -e "s|@URL@|$(URL)|" \
+	< $< > $@
+
+install: $(install_data)
 	@if test -z $$XDG_DATA_HOME; then \
 	   EXTENSIONS_HOME=$$HOME/.local/share/gnome-shell/extensions ; \
 	 else \
@@ -21,10 +34,11 @@ uninstall:
 	 fi ; \
 	 rm -rf $$EXTENSIONS_HOME/$(UUID)
 
-all:
+all: $(install_data)
 
-release: clean
-	$(ZIP) -j $(EXTENSION_NAME).zip $(install_data)
+release: clean $(install_data)
+	$(ZIP) -j $(EXTENSION_NAME)-$(VERSION).zip $(install_data)
 
 clean:
-	@rm -f $(EXTENSION_NAME).zip
+	@rm -f metadata.json
+	@rm -f $(EXTENSION_NAME)-$(VERSION).zip
