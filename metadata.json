@@ -1,0 +1,6 @@
+{
+  "shell-version": [ "3.12" ],
+  "uuid": "word-clock@emmanuelebassi.name",
+  "name": "Word clock",
+  "description": "Show time and date using words instead of numbers."
+}
