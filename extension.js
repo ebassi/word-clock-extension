@@ -60,7 +60,7 @@ const ORDINAL_ONES = [
 
 const ORDINAL_TEENS = [
   '',
-  'eventh',
+  'eleventh',
   'twelfth',
   'thirteenth',
   'fourteenth',
