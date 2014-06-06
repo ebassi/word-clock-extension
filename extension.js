@@ -5,7 +5,6 @@ const GnomeDesktop = imports.gi.GnomeDesktop;
 const Lang = imports.lang;
 const Main = imports.ui.main;
 const St = imports.gi.St;
-const Tweener = imports.ui.tweener;
 
 const ONES = [
   'zero',
