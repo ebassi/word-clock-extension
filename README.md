@@ -39,6 +39,17 @@ website to enable it.
 This extension will likely conflict with every other extension that
 changes the clock in the Shell panel.
 
+### Contributing
+
+If you find a bug in this extension, or you want to contribute a new feature,
+follow these steps:
+
+ 1. fork [the repository](https://github.com/ebassi/word-clock-extension)
+ 2. hack, hack, hack
+ 3. push your work to your repository
+ 4. open [a pull request](https://github.com/ebassi/word-clock-extensions/pulls)
+ 5. wait patiently for me to review or merge your work
+
 ### License
 
 This extension is released under the terms of the MIT/X11 license.
