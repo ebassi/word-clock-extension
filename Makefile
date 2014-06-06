@@ -1,4 +1,6 @@
-UUID = word-clock@emmanuelebassi.name
+EXTENSION_NAME = word-clock
+UUID = $(EXTENSION_NAME)@emmanuelebassi.name
+ZIP = `which zip`
 
 install_data = metadata.json extension.js
 
@@ -20,3 +22,9 @@ uninstall:
 	 rm -rf $$EXTENSIONS_HOME/$(UUID)
 
 all:
+
+release: clean
+	$(ZIP) -j $(EXTENSION_NAME).zip $(install_data)
+
+clean:
+	@rm -f $(EXTENSION_NAME).zip
