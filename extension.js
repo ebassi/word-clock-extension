@@ -112,12 +112,15 @@ const MONTHS = [
   'december',
 ];
 
+const IT_S_A = "it is a";
+const IT_S = "it is";
 const O_CLOCK = "o'clock";
 const TWELVE = { noon: 'noon', midnight: 'midnight' };
 const QUARTER = 'quarter';
 const HALF = 'half';
 const DIRECTION = { to: 'to', past: 'past' };
 const OF = 'of';
+const ON = 'on';
 
 let settings = null;
 let dateMenu = null;
@@ -181,22 +184,25 @@ function timeToWords(hours, minutes) {
 
     if (wordMinutes != 0) {
         if (wordMinutes == 15) {
-            res = QUARTER + ' ' + DIRECTION.past + ' ';
+            res = IT_S_A + ' ' + QUARTER + ' ' + DIRECTION.past + ' ';
         }
         else if (wordMinutes == 45) {
-            res = QUARTER + ' ' + DIRECTION.to + ' ';
+            res = IT_S_A + ' ' + QUARTER + ' ' + DIRECTION.to + ' ';
             wordHours = (wordHours + 1) % 24;
         }
         else if (wordMinutes == 30) {
-            res = HALF + ' ' + DIRECTION.past + ' ';
+            res = IT_S + ' ' + HALF + ' ' + DIRECTION.past + ' ';
         }
         else if (wordMinutes < 30) {
-            res = appendNumber(wordMinutes) + ' ' + DIRECTION.past + ' ';
+            res = IT_S + ' ' + appendNumber(wordMinutes) + ' ' + DIRECTION.past + ' ';
         }
         else {
-            res = appendNumber(60 - wordMinutes) + ' ' + DIRECTION.to + ' ';
+            res = IT_S + ' ' + appendNumber(60 - wordMinutes) + ' ' + DIRECTION.to + ' ';
             wordHours = (wordHours + 1) % 24;
         }
+    }
+    else {
+        res = IT_S + ' ';
     }
 
     if (wordHours == 0) {
@@ -226,7 +232,7 @@ function updateClockAndDate() {
     let str = timeToWords(date.get_hour(), date.get_minute());
 
     if (settings.get_boolean('clock-show-date')) {
-        str += (', ' + dateToWords(date.get_day_of_week(), date.get_day_of_month(), date.get_month()));
+        str += (' ' + ON + ' ' + dateToWords(date.get_day_of_week(), date.get_day_of_month(), date.get_month()));
     }
 
     dateMenu._clockDisplay.set_text(str);
