@@ -13,11 +13,13 @@ words instead of digits.
 
 This is the end result:
 
-![Screenshot](/word-clock-screenshot.png)
+![Word clock without date](/word-clock-no-date.png)
 
 If the `clock-show-date` setting of the `org.gnome.desktop.interface`
 schema is set to `true` then the extension will show the date as well
-as the time.
+as the time:
+
+![Word clock with date](/word-clock-with-date.png)
 
 ### How to install
 
