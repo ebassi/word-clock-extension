@@ -55,7 +55,7 @@ const ORDINAL_ONES = [
   'sixth',
   'seventh',
   'eighth',
-  'nineth',
+  'ninth',
 ];
 
 const ORDINAL_TEENS = [
