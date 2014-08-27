@@ -49,7 +49,7 @@ follow these steps:
  1. fork [the repository](https://github.com/ebassi/word-clock-extension)
  2. hack, hack, hack
  3. push your work to your repository
- 4. open [a pull request](https://github.com/ebassi/word-clock-extensions/pulls)
+ 4. open [a pull request](https://github.com/ebassi/word-clock-extension/pulls)
  5. wait patiently for me to review or merge your work
 
 ### License
