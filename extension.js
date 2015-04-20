@@ -263,6 +263,9 @@ function disable() {
     }
 
     dateMenu.disconnect(updateClockId);
+
     dateMenu._updateClockAndDate = originalUpdateClockAndDate;
-    dateMenu._updateClockAndDate();
+    if (originalUpdateClockAndDate) {
+        dateMenu._updateClockAndDate();
+    }
 }
