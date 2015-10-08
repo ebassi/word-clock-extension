@@ -1,6 +1,6 @@
 EXTENSION_NAME = word-clock
 NAME = Word Clock
-VERSION = 5
+VERSION = 6
 URL = https://github.com/ebassi/word-clock-extension
 
 UUID = $(EXTENSION_NAME)@emmanuelebassi.name
