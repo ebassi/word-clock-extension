@@ -127,7 +127,6 @@ const WORDS = {
 
 let settings = null;
 let dateMenu = null;
-let originalUpdateClockAndDate = null;
 let updateClockId = 0;
 
 function appendNumber(num) {
@@ -238,12 +237,16 @@ function updateClockAndDate() {
         str += (' ' + WORDS.on + ' ' + dateToWords(date.get_day_of_week(), date.get_day_of_month(), date.get_month()));
     }
 
-    dateMenu._clockDisplay.set_text(str);
+    dateMenu._clockDisplay.text = str;
 }
 
 function init() {
-    dateMenu = Main.panel.statusArea.dateMenu;
-    originalUpdateClockAndDate = dateMenu._updateClockAndDate;
+    dateMenu = Main.panel.statusArea['dateMenu'];
+    if (!dateMenu) {
+        log('No dateMenu panel element defined.');
+        return;
+    }
+
     settings = new Gio.Settings({ schema: 'org.gnome.desktop.interface' });
 }
 
@@ -252,9 +255,12 @@ function enable() {
         return;
     }
 
-    dateMenu._updateClockAndDate = updateClockAndDate;
-    updateClockId = dateMenu._clock.connect('notify::clock', Lang.bind(dateMenu, dateMenu._updateClockAndDate));
-    dateMenu._updateClockAndDate();
+    if (updateClockId != 0) {
+        dateMenu._clock.disconnect(updateClockId);
+    }
+
+    updateClockId = dateMenu._clock.connect('notify::clock', Lang.bind(dateMenu, updateClockAndDate));
+    updateClockAndDate();
 }
 
 function disable() {
@@ -262,10 +268,10 @@ function disable() {
         return;
     }
 
-    dateMenu.disconnect(updateClockId);
-
-    dateMenu._updateClockAndDate = originalUpdateClockAndDate;
-    if (originalUpdateClockAndDate) {
-        dateMenu._updateClockAndDate();
+    if (updateClockId != 0) {
+        dateMenu._clock.disconnect(updateClockId);
+        updateClockId = 0;
     }
+
+    dateMenu._clockDisplay.text = dateMenu._clock.clock;
 }
