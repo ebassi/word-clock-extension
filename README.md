@@ -6,7 +6,9 @@ into a text version, using British English conventions.
 ### How does it work
 
 The extension monkeypatches the `Main.panel.statusArea.dateMenu` object
-and replaces the `_updateClockAndDate` method with its own version.
+and when the wall clock updates its `clock` property, the extension
+replaces the `text` property of the label actor with its own processed
+version of the time.
 
 The default label of the clock when enabling the extension will contain
 words instead of digits.
