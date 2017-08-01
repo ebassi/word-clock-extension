@@ -1,7 +1,7 @@
-# Word clock extension for GNOME Shell
+# French Word Clock extension for GNOME Shell
 
 A *very* simple extension that turns the numeric clock of GNOME Shell
-into a text version, using British English conventions.
+into a text version in French. This is a fork from the Word Clock extension at https://github.com/ebassi/word-clock-extension.
 
 ### How does it work
 
@@ -27,7 +27,7 @@ as the time:
 
 Clone the repository:
 
-    $ git clone git://github.com/ebassi/word-clock-extension
+    $ git clone git://github.com/jlemonde/word-clock-extension
     $ cd word-clock-extension
 
 And type:
