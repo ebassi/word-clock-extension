@@ -1,5 +1,5 @@
-EXTENSION_NAME = word-clock
-NAME = Word Clock
+EXTENSION_NAME = french-word-clock
+NAME = French Word Clock
 VERSION = 9
 URL = https://github.com/jlemonde/french-word-clock-extension
 
