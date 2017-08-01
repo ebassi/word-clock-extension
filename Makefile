@@ -1,9 +1,9 @@
-EXTENSION_NAME = word-clock
-NAME = Word Clock
+EXTENSION_NAME = french-word-clock
+NAME = French Word Clock
 VERSION = 9
-URL = https://github.com/ebassi/word-clock-extension
+URL = https://github.com/jlemonde/french-word-clock-extension
 
-UUID = $(EXTENSION_NAME)@emmanuelebassi.name
+UUID = $(EXTENSION_NAME)@jlemonde.name
 SED = `which sed`
 ZIP = `which zip`
 

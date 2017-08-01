@@ -1,3 +1,5 @@
+const DONNER_LHEURE_EXACTE = false;
+
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
@@ -6,272 +8,245 @@ const Lang = imports.lang;
 const Main = imports.ui.main;
 const St = imports.gi.St;
 
-const ONES = [
-  'zero',
-  'one',
-  'two',
-  'three',
-  'four',
-  'five',
-  'six',
-  'seven',
-  'eight',
-  'nine',
+const HEURES = [
+   'minuit',
+   'une heure',
+   'deux heures',
+   'trois heures',
+   'quatre heures',
+   'cinq heures',
+   'six heures',
+   'sept heures',
+   'huit heures',
+   'neuf heures',
+   'dix heures',
+   'onze heures',
+   'midi',
+   'treize heures',
+   'quatorze heures',
+   'quinze heures',
+   'seize heures',
+   'dix-sept heures',
+   'dix-huit heures',
+   'dix-neuf heures',
+   'vingt heures',
+   'vingt-et-une heures',
+   'vingt-deux heures',
+   'vingt-trois heures',
+   'minuit'
 ];
 
-const TEENS = [
-  '',
-  'eleven',
-  'twelve',
-  'thirteen',
-  'fourteen',
-  'fifteen',
-  'sixteen',
-  'seventeen',
-  'eighteen',
-  'nineteen',
+const NOMBRES_FEMININ = [
+   '',
+   'une',
+   'deux',
+   'trois',
+   'quatre',
+   'cinq',
+   'six',
+   'sept',
+   'huit',
+   'neuf',
+   'dix',
+   'onze',
+   'douze',
+   'treize',
+   'quatorze',
+   'quinze',
+   'seize',
+   'dix-sept',
+   'dix-huit',
+   'dix-neuf',
+   'vingt',
+   'vingt-et-une',
+   'vingt-deux',
+   'vingt-trois',
+   'vingt-quatre',
+   'vingt-cinq',
+   'vingt-six',
+   'vingt-sept',
+   'vingt-huit',
+   'vingt-neuf',
+   'trente',
+   'trente-et-une',
+   'trente-deux',
+   'trente-trois',
+   'trente-quatre',
+   'trente-cinq',
+   'trente-six',
+   'trente-sept',
+   'trente-huit',
+   'trente-neuf',
+   'quarante',
+   'quarante-et-une',
+   'quarante-deux',
+   'quarante-trois',
+   'quarante-quatre',
+   'quarante-cinq',
+   'quarante-six',
+   'quarante-sept',
+   'quarante-huit',
+   'quarante-neuf',
+   'cinquante',
+   'cinquante-et-une',
+   'cinquante-deux',
+   'cinquante-trois',
+   'cinquante-quatre',
+   'cinquante-cinq',
+   'cinquante-six',
+   'cinquante-sept',
+   'cinquante-huit',
+   'cinquante-neuf'
 ];
 
-const TENS = [
-  '',
-  'ten',
-  'twenty',
-  'thirty',
-  'fourty',
-  'fifty',
-  'sixty',
-  'seventy',
-  'eighty',
-  'ninenty',
-];
-
-const ORDINAL_ONES = [
-  '',
-  'first',
-  'second',
-  'third',
-  'fourth',
-  'fifth',
-  'sixth',
-  'seventh',
-  'eighth',
-  'ninth',
-];
-
-const ORDINAL_TEENS = [
-  '',
-  'eleventh',
-  'twelfth',
-  'thirteenth',
-  'fourteenth',
-  'fifteenth',
-  'sixteenth',
-  'seventeenth',
-  'eighteenth',
-  'nineteenth',
-];
-
-const ORDINAL_TENS = [
-  '',
-  'tenth',
-  'twentieth',
-  'thirtieth',
-  'fourtieth',
-  'fiftieth',
-  'sixtieth',
-  'seventieth',
-  'eightieth',
-  'ninetieth',
-];
-
-const DAYS = [
-  '',
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-];
-
-const MONTHS = [
-  '',
-  'january',
-  'february',
-  'march',
-  'april',
-  'may',
-  'june',
-  'july',
-  'august',
-  'september',
-  'october',
-  'november',
-  'december',
-];
-
-const WORDS = {
-  it_is: 'it is',
-  it_is_a: 'it is a',
-  o_clock: "o'clock",
-  noon: 'noon',
-  midnight: 'midnight',
-  quarter: 'quarter',
-  half: 'half',
-  to: 'to',
-  past: 'past',
-  of: 'of',
-  on: 'on',
+const MOTS = {
+   pres_de        : 'presque $',
+   passees        : '$ passées',
+   passee         : '$ passée',
+   passe          : 'passé $'
 };
+
+function donnerLHeure(h, m){
+   var lheure;
+
+   if(DONNER_LHEURE_EXACTE){
+      lheure = HEURES[h] + ' ' + NOMBRES_FEMININ[m];
+   }
+   else{
+      let add_one = false;
+      if(m < 3){
+         lheure = HEURES[h == 12 ? h : h % 12];
+      }
+      else if(m >= 3 && m < 8){
+         lheure = HEURES[h == 12 ? h : h % 12] + ' cinq';
+      }
+      else if(m >= 8 && m < 13){
+         lheure = HEURES[h == 12 ? h : h % 12] + ' dix';
+      }
+      else if(m >= 13 && m < 18){
+         lheure = HEURES[h == 12 ? h : h % 12] + ' et quart';
+      }
+      else if(m >= 18 && m < 23){
+         lheure = HEURES[h == 12 ? h : h % 12] + ' vingt';
+      }
+      else if(m >= 23 && m < 28){
+         lheure  = HEURES[h == 12 ? h : h % 12] + ' vingt-cinq';
+      }
+      else if(m >= 28 && m < 33){
+         lheure = HEURES[h == 12 ? h : h % 12] + ' et demi' + (h == 12 || h == 24 || h == 0 ? '' : 'e');
+      }
+      else if(m >= 33 && m < 38){
+         lheure = HEURES[h == 23 ? 24 : (h % 12 + 1)] + ' moins vingt-cinq';
+      }
+      else if(m >= 38 && m < 43){
+         lheure = HEURES[h == 23 ? 24 : (h % 12 + 1)] + ' moins vingt';
+         add_one = true;
+      }
+      else if(m >= 43 && m < 48){
+         lheure = HEURES[h == 23 ? 24 : (h % 12 + 1)] + ' moins le quart';
+         add_one = true;
+      }
+      else if(m >= 48 && m < 53){
+         lheure = HEURES[h == 23 ? 24 : (h % 12 + 1)] + ' moins dix';
+         add_one = true;
+      }
+      else if(m >= 53 && m < 58){
+         lheure = HEURES[h == 23 ? 24 : (h % 12 + 1)] + ' moins cinq';
+         add_one = true;
+      }
+      else if(m >= 58){
+         lheure = HEURES[h == 23 ? 24 : (h % 12 + 1)];
+         add_one = true;
+      }
+      else{
+         lheure = 'ERREUR'; // Ne sait-on jamais
+      }
+
+      if(m % 5 == 1 || m % 5 == 2){
+         let H = (h + add_one);
+         lheure = MOTS[H == 12 || H == 24 || H == 0 ? 'passe' : (H % 12 == 1 ? 'passee' : 'passees')].replace('$', lheure);
+      }
+      else if(m % 5 == 3 || m % 5 == 4){
+         lheure = MOTS['pres_de'].replace('$', lheure);
+      }
+   }
+
+   return "C'est " + lheure;
+}
+
+const JOURS_DE_LA_SEMAINE = [
+  '',
+  'lundi',
+  'mardi',
+  'mercredi',
+  'jeudi',
+  'vendredi',
+  'samedi',
+  'dimanche',
+];
+
+function nombre_masculin(nombr){
+   var nombr = NOMBRES_FEMININ[nombr];
+   if(nombr % 10 == 1 && nombr != 11){
+      nombr = nombr.substr(0, nombr.length - 1);
+   }
+   return nombr;
+}
+
+function donnerLeJour(jourSem, jour, mois){
+   return ", " + JOURS_DE_LA_SEMAINE[jourSem] + ' ' + (jour == 1 ? 'premier' : nombre_masculin(jour));
+   // As of now, I don't write the month because it would be too long.
+}
 
 let settings = null;
 let dateMenu = null;
 let updateClockId = 0;
 
-function appendNumber(num) {
-    let tensVal = Math.floor(num / 10) % 10;
-    let onesVal = num % 10;
-    let res = '';
+function updateClockAndDate(){
+   let tz = dateMenu._clock.get_timezone();
+   let date = GLib.DateTime.new_now(tz);
 
-    if (tensVal > 0) {
-        if (tensVal == 1 && num != 10) {
-            return TEENS[onesVal];
-        }
+   let str = donnerLHeure(date.get_hour(), date.get_minute());
 
-        res = TENS[tensVal];
-        if (onesVal > 0) {
-            res += ' ';
-        }
-    }
+   if(settings.get_boolean('clock-show-date')) {
+      str += donnerLeJour(date.get_day_of_week(), date.get_day_of_month(), date.get_month());
+   }
 
-    if (onesVal > 0 || num == 0) {
-        res += ONES[onesVal];
-    }
-
-    return res;
+   dateMenu._clockDisplay.text = str;
 }
 
-function appendOrdinal(num) {
-    let tensVal = Math.floor(num / 10) % 10;
-    let onesVal = num % 10;
-    let res = '';
+function init(){
+   dateMenu = Main.panel.statusArea['dateMenu'];
+   if(!dateMenu){
+      log('No dateMenu panel element defined.');
+      return;
+   }
 
-    if (tensVal > 0) {
-        if (tensVal == 1 && num != 10) {
-            return ORDINAL_TEENS[onesVal];
-        }
-
-        if (onesVal == 0) {
-            return ORDINAL_TENS[tensVal];
-        }
-
-        res = TENS[tensVal];
-        if (onesVal > 0) {
-            res += ' ';
-        }
-    }
-
-    if (onesVal > 0 || num == 0) {
-        res += ORDINAL_ONES[onesVal];
-    }
-
-    return res;
+   settings = new Gio.Settings({schema: 'org.gnome.desktop.interface'});
 }
 
-function timeToWords(hours, minutes) {
-    let wordHours = hours;
-    let wordMinutes = minutes;
-    let res = '';
+function enable(){
+   if(!dateMenu){
+      return;
+   }
 
-    if (wordMinutes != 0) {
-        if (wordMinutes == 15) {
-            res = WORDS.it_is_a + ' ' + WORDS.quarter + ' ' + WORDS.past + ' ';
-        }
-        else if (wordMinutes == 45) {
-            res = WORDS.it_is_a + ' ' + WORDS.quarter + ' ' + WORDS.to + ' ';
-            wordHours = (wordHours + 1) % 24;
-        }
-        else if (wordMinutes == 30) {
-            res = WORDS.it_is + ' ' + WORDS.half + ' ' + WORDS.past + ' ';
-        }
-        else if (wordMinutes < 30) {
-            res = WORDS.it_is + ' ' + appendNumber(wordMinutes) + ' ' + WORDS.past + ' ';
-        }
-        else {
-            res = WORDS.it_is + ' ' + appendNumber(60 - wordMinutes) + ' ' + WORDS.to + ' ';
-            wordHours = (wordHours + 1) % 24;
-        }
-    }
-    else {
-        res = WORDS.it_is + ' ';
-    }
+   if(updateClockId != 0){
+      dateMenu._clock.disconnect(updateClockId);
+   }
 
-    if (wordHours == 0) {
-        res += WORDS.midnight;
-    }
-    else if (wordHours == 12) {
-        res += WORDS.noon;
-    }
-    else {
-        res += appendNumber(wordHours % 12);
-    }
-
-    if (wordMinutes == 0 && !(wordHours == 0 || wordHours == 12)) {
-        res = res + ' ' + WORDS.o_clock;
-    }
-
-    return res;
+   updateClockId = dateMenu._clock.connect('notify::clock', Lang.bind(dateMenu, updateClockAndDate));
+   updateClockAndDate();
 }
 
-function dateToWords(weekDay, day, month) {
-    return DAYS[weekDay] + ', ' + appendOrdinal(day) + ' ' + WORDS.of + ' ' + MONTHS[month];
-}
+function disable(){
+   if(!dateMenu){
+      return;
+   }
 
-function updateClockAndDate() {
-    let tz = dateMenu._clock.get_timezone();
-    let date = GLib.DateTime.new_now(tz);
-    let str = timeToWords(date.get_hour(), date.get_minute());
+   if(updateClockId != 0){
+      dateMenu._clock.disconnect(updateClockId);
+      updateClockId = 0;
+   }
 
-    if (settings.get_boolean('clock-show-date')) {
-        str += (' ' + WORDS.on + ' ' + dateToWords(date.get_day_of_week(), date.get_day_of_month(), date.get_month()));
-    }
-
-    dateMenu._clockDisplay.text = str;
-}
-
-function init() {
-    dateMenu = Main.panel.statusArea['dateMenu'];
-    if (!dateMenu) {
-        log('No dateMenu panel element defined.');
-        return;
-    }
-
-    settings = new Gio.Settings({ schema: 'org.gnome.desktop.interface' });
-}
-
-function enable() {
-    if (!dateMenu) {
-        return;
-    }
-
-    if (updateClockId != 0) {
-        dateMenu._clock.disconnect(updateClockId);
-    }
-
-    updateClockId = dateMenu._clock.connect('notify::clock', Lang.bind(dateMenu, updateClockAndDate));
-    updateClockAndDate();
-}
-
-function disable() {
-    if (!dateMenu) {
-        return;
-    }
-
-    if (updateClockId != 0) {
-        dateMenu._clock.disconnect(updateClockId);
-        updateClockId = 0;
-    }
-
-    dateMenu._clockDisplay.text = dateMenu._clock.clock;
+   dateMenu._clockDisplay.text = dateMenu._clock.clock;
 }
