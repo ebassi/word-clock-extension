@@ -1,10 +1,11 @@
-const Clutter = imports.gi.Clutter;
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const GnomeDesktop = imports.gi.GnomeDesktop;
-const Lang = imports.lang;
-const Main = imports.ui.main;
-const St = imports.gi.St;
+import Clutter from 'gi://Clutter';
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
+import GnomeDesktop from 'gi://GnomeDesktop';
+import GObject from 'gi://GObject';
+import St from 'gi://St';
+import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 const ONES = [
   'zero',
@@ -125,153 +126,147 @@ const WORDS = {
   on: 'on',
 };
 
-let settings = null;
-let dateMenu = null;
-let updateClockId = 0;
-
-function appendNumber(num) {
-    let tensVal = Math.floor(num / 10) % 10;
-    let onesVal = num % 10;
-    let res = '';
-
-    if (tensVal > 0) {
-        if (tensVal == 1 && num != 10) {
-            return TEENS[onesVal];
-        }
-
-        res = TENS[tensVal];
-        if (onesVal > 0) {
-            res += ' ';
-        }
+const WordClockUpdater = GObject.registerClass({
+    GTypeName: 'WordClockUpdater',
+}, class A extends GObject.Object {
+    constructor() {
+        super();
+        this._dateMenu = Main.panel.statusArea['dateMenu'];
+        this._settings = new Gio.Settings({ schema: 'org.gnome.desktop.interface' });
     }
 
-    if (onesVal > 0 || num == 0) {
-        res += ONES[onesVal];
+    setup() {
+        this._updateClockAndDate();
+        this._updateClockId = this._dateMenu._clock.connect('notify::clock',
+                                                            this._updateClockAndDate.bind(this));
     }
 
-    return res;
-}
-
-function appendOrdinal(num) {
-    let tensVal = Math.floor(num / 10) % 10;
-    let onesVal = num % 10;
-    let res = '';
-
-    if (tensVal > 0) {
-        if (tensVal == 1 && num != 10) {
-            return ORDINAL_TEENS[onesVal];
-        }
-
-        if (onesVal == 0) {
-            return ORDINAL_TENS[tensVal];
-        }
-
-        res = TENS[tensVal];
-        if (onesVal > 0) {
-            res += ' ';
-        }
+    teardown() {
+        this._dateMenu._clockDisplay.text = this._dateMenu._clock.clock;
+        this._dateMenu._clock.disconnect(this._updateClockId);
+        this._updateClockId = 0;
     }
 
-    if (onesVal > 0 || num == 0) {
-        res += ORDINAL_ONES[onesVal];
+    _appendNumber(num) {
+        let tensVal = Math.floor(num / 10) % 10;
+        let onesVal = num % 10;
+        let res = '';
+
+        if (tensVal > 0) {
+            if (tensVal == 1 && num != 10) {
+                return TEENS[onesVal];
+            }
+
+            res = TENS[tensVal];
+            if (onesVal > 0) {
+                res += ' ';
+            }
+        }
+
+        if (onesVal > 0 || num == 0) {
+            res += ONES[onesVal];
+        }
+
+        return res;
     }
 
-    return res;
-}
+    _appendOrdinal(num) {
+        let tensVal = Math.floor(num / 10) % 10;
+        let onesVal = num % 10;
+        let res = '';
 
-function timeToWords(hours, minutes) {
-    let wordHours = hours;
-    let wordMinutes = minutes;
-    let res = '';
+        if (tensVal > 0) {
+            if (tensVal == 1 && num != 10) {
+                return ORDINAL_TEENS[onesVal];
+            }
 
-    if (wordMinutes != 0) {
-        if (wordMinutes == 15) {
-            res = WORDS.it_is_a + ' ' + WORDS.quarter + ' ' + WORDS.past + ' ';
+            if (onesVal == 0) {
+                return ORDINAL_TENS[tensVal];
+            }
+
+            res = TENS[tensVal];
+            if (onesVal > 0) {
+                res += ' ';
+            }
         }
-        else if (wordMinutes == 45) {
-            res = WORDS.it_is_a + ' ' + WORDS.quarter + ' ' + WORDS.to + ' ';
-            wordHours = (wordHours + 1) % 24;
+
+        if (onesVal > 0 || num == 0) {
+            res += ORDINAL_ONES[onesVal];
         }
-        else if (wordMinutes == 30) {
-            res = WORDS.it_is + ' ' + WORDS.half + ' ' + WORDS.past + ' ';
+
+        return res;
+    }
+
+    _timeToWords(hours, minutes) {
+        let wordHours = hours;
+        let wordMinutes = minutes;
+        let res = '';
+
+        if (wordMinutes != 0) {
+            if (wordMinutes == 15) {
+                res = WORDS.it_is_a + ' ' + WORDS.quarter + ' ' + WORDS.past + ' ';
+            }
+            else if (wordMinutes == 45) {
+                res = WORDS.it_is_a + ' ' + WORDS.quarter + ' ' + WORDS.to + ' ';
+                wordHours = (wordHours + 1) % 24;
+            }
+            else if (wordMinutes == 30) {
+                res = WORDS.it_is + ' ' + WORDS.half + ' ' + WORDS.past + ' ';
+            }
+            else if (wordMinutes < 30) {
+                res = WORDS.it_is + ' ' + this._appendNumber(wordMinutes) + ' ' + WORDS.past + ' ';
+            }
+            else {
+                res = WORDS.it_is + ' ' + this._appendNumber(60 - wordMinutes) + ' ' + WORDS.to + ' ';
+                wordHours = (wordHours + 1) % 24;
+            }
+        } else {
+            res = WORDS.it_is + ' ';
         }
-        else if (wordMinutes < 30) {
-            res = WORDS.it_is + ' ' + appendNumber(wordMinutes) + ' ' + WORDS.past + ' ';
+
+        if (wordHours == 0) {
+            res += WORDS.midnight;
+        }
+        else if (wordHours == 12) {
+            res += WORDS.noon;
         }
         else {
-            res = WORDS.it_is + ' ' + appendNumber(60 - wordMinutes) + ' ' + WORDS.to + ' ';
-            wordHours = (wordHours + 1) % 24;
+            res += this._appendNumber(wordHours % 12);
         }
-    }
-    else {
-        res = WORDS.it_is + ' ';
+
+        if (wordMinutes == 0 && !(wordHours == 0 || wordHours == 12)) {
+            res = res + ' ' + WORDS.o_clock;
+        }
+
+        return res;
     }
 
-    if (wordHours == 0) {
-        res += WORDS.midnight;
-    }
-    else if (wordHours == 12) {
-        res += WORDS.noon;
-    }
-    else {
-        res += appendNumber(wordHours % 12);
+    _dateToWords(weekDay, day, month) {
+        return DAYS[weekDay] + ', ' + this._appendOrdinal(day) + ' ' + WORDS.of + ' ' + MONTHS[month];
     }
 
-    if (wordMinutes == 0 && !(wordHours == 0 || wordHours == 12)) {
-        res = res + ' ' + WORDS.o_clock;
-    }
+    _updateClockAndDate() {
+        let tz = this._dateMenu._clock.get_timezone();
+        let date = GLib.DateTime.new_now(tz);
+        let str = this._timeToWords(date.get_hour(), date.get_minute());
 
-    return res;
+        if (this._settings.get_boolean('clock-show-date')) {
+            str += (' ' + WORDS.on + ' ' + this._dateToWords(date.get_day_of_week(), date.get_day_of_month(), date.get_month()));
+        }
+
+        this._dateMenu._clockDisplay.text = str;
+    }
 }
+);
 
-function dateToWords(weekDay, day, month) {
-    return DAYS[weekDay] + ', ' + appendOrdinal(day) + ' ' + WORDS.of + ' ' + MONTHS[month];
-}
-
-function updateClockAndDate() {
-    let tz = dateMenu._clock.get_timezone();
-    let date = GLib.DateTime.new_now(tz);
-    let str = timeToWords(date.get_hour(), date.get_minute());
-
-    if (settings.get_boolean('clock-show-date')) {
-        str += (' ' + WORDS.on + ' ' + dateToWords(date.get_day_of_week(), date.get_day_of_month(), date.get_month()));
+export default class WordClockExtension extends Extension {
+    enable() {
+        this._wordClockUpdater = new WordClockUpdater();
+        this._wordClockUpdater.setup();
     }
 
-    dateMenu._clockDisplay.text = str;
-}
-
-function init() {
-    dateMenu = Main.panel.statusArea['dateMenu'];
-    if (!dateMenu) {
-        log('No dateMenu panel element defined.');
-        return;
+    disable() {
+        this._wordClockUpdater.teardown();
+        this._wordClockUpdater = null;
     }
-
-    settings = new Gio.Settings({ schema: 'org.gnome.desktop.interface' });
-}
-
-function enable() {
-    if (!dateMenu) {
-        return;
-    }
-
-    if (updateClockId != 0) {
-        dateMenu._clock.disconnect(updateClockId);
-    }
-
-    updateClockId = dateMenu._clock.connect('notify::clock', Lang.bind(dateMenu, updateClockAndDate));
-    updateClockAndDate();
-}
-
-function disable() {
-    if (!dateMenu) {
-        return;
-    }
-
-    if (updateClockId != 0) {
-        dateMenu._clock.disconnect(updateClockId);
-        updateClockId = 0;
-    }
-
-    dateMenu._clockDisplay.text = dateMenu._clock.clock;
 }
