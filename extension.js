@@ -112,8 +112,6 @@ const MONTHS = [
 ];
 
 const WORDS = {
-  it_is: 'it is',
-  it_is_a: 'it is a',
   o_clock: "o'clock",
   noon: 'noon',
   midnight: 'midnight',
@@ -186,25 +184,22 @@ function timeToWords(hours, minutes) {
 
     if (wordMinutes != 0) {
         if (wordMinutes == 15) {
-            res = WORDS.it_is_a + ' ' + WORDS.quarter + ' ' + WORDS.past + ' ';
+            res = WORDS.quarter + ' ' + WORDS.past + ' ';
         }
         else if (wordMinutes == 45) {
-            res = WORDS.it_is_a + ' ' + WORDS.quarter + ' ' + WORDS.to + ' ';
+            res = WORDS.quarter + ' ' + WORDS.to + ' ';
             wordHours = (wordHours + 1) % 24;
         }
         else if (wordMinutes == 30) {
-            res = WORDS.it_is + ' ' + WORDS.half + ' ' + WORDS.past + ' ';
+            res = WORDS.half + ' ' + WORDS.past + ' ';
         }
         else if (wordMinutes < 30) {
-            res = WORDS.it_is + ' ' + appendNumber(wordMinutes) + ' ' + WORDS.past + ' ';
+            res = appendNumber(wordMinutes) + ' ' + WORDS.past + ' ';
         }
         else {
-            res = WORDS.it_is + ' ' + appendNumber(60 - wordMinutes) + ' ' + WORDS.to + ' ';
+            res = appendNumber(60 - wordMinutes) + ' ' + WORDS.to + ' ';
             wordHours = (wordHours + 1) % 24;
         }
-    }
-    else {
-        res = WORDS.it_is + ' ';
     }
 
     if (wordHours == 0) {
